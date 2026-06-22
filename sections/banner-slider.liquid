@@ -1,59 +1,543 @@
-<section class="hero-slider">
-  <div class="swiper heroSwiper">
-    <div class="swiper-wrapper">
+{%- style -%}
+  /* Force Section Outer View wrapper to stretch absolute full width edge-to-edge */
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.section_bg_color }};
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
 
-      {% for block in section.blocks %}
-        <div class="swiper-slide">
+  /* Full Width & Height Structural Viewport Wrapper */
+  .swiper-container-{{ section.id }} {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: {{ section.settings.slider_height_desktop }}vh;
+    min-height: 500px;
+    position: relative;
+    overflow: hidden;
+    margin: 0 !important;
+  }
 
-          {% if block.settings.image %}
-            <img
-              src="{{ block.settings.image | image_url }}"
-              alt=""
-              width=""
-              height=""
-            >
-          {% endif %}
+  .slide-container-{{ section.id }} {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding: 0 10%;
+    align-items: center;
+    justify-content: flex-start;
+    background-size: cover;
+    background-position: {{ section.settings.bg_position }};
+    background-repeat: no-repeat;
+    position: relative;
+  }
 
-          <h2>{{ block.settings.heading }}</h2>
+  /* Core Transparent overlay layer to maximize readability over noisy image backgrounds */
+  .slide-container-{{ section.id }}::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, {{ section.settings.overlay_opacity | divided_by: 100.0 }});
+    z-index: 1;
+  }
+
+  .slide-content-{{ section.id }} {
+    width: 100%;
+    max-width: 650px;
+    z-index: 2;
+    text-align: left;
+  }
+
+  /* Font Configuration Parameters mapped directly with Shopify Engine scale settings */
+  .slide-title-{{ section.id }} {
+    font-size: {{ section.settings.title_size }}rem;
+    font-weight: 700;
+    color: {{ section.settings.title_color }};
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+
+  .slide-title-{{ section.id }} span {
+    display: block;
+    color: {{ section.settings.title_span_color }};
+  }
+
+  .slide-subtitle-{{ section.id }} {
+    font-size: {{ section.settings.subtitle_size }}rem;
+    color: {{ section.settings.subtitle_color }};
+    margin-bottom: 40px;
+  }
+
+  /* Form Container Pills */
+  .subscribe-form-{{ section.id }} {
+    display: flex;
+    align-items: center;
+    background-color: {{ section.settings.form_bg_color }};
+    padding: 6px 6px 6px 25px;
+    border-radius: 50px;
+    width: 100%;
+    max-width: 450px;
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .subscribe-form-{{ section.id }} input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 1rem;
+    background: transparent;
+    color: {{ section.settings.form_text_color }};
+  }
+
+  .subscribe-form-{{ section.id }} button {
+    background-color: {{ section.settings.btn_bg_color }};
+    color: {{ section.settings.btn_text_color }};
+    border: none;
+    padding: 15px 32px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+  }
+
+  .subscribe-form-{{ section.id }} button:hover {
+    background-color: {{ section.settings.btn_hover_bg_color }};
+  }
+
+  /* Fixed Circular Base Vectors for Navigations */
+  .swiper-button-next-{{ section.id }},
+  .swiper-button-prev-{{ section.id }} {
+    background-color: {{ section.settings.nav_bg_color }} !important;
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    transition: all 0.3s ease !important;
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .swiper-button-next-{{ section.id }}::after,
+  .swiper-button-prev-{{ section.id }}::after {
+    font-size: 16px !important;
+    color: {{ section.settings.nav_icon_color }} !important;
+    font-weight: bold !important;
+    line-height: 1 !important;
+    display: block !important;
+  }
+
+  .swiper-button-next-{{ section.id }}:hover,
+  .swiper-button-prev-{{ section.id }}:hover {
+    background-color: {{ section.settings.btn_bg_color }} !important;
+  }
+  .swiper-button-next-{{ section.id }}:hover::after,
+  .swiper-button-prev-{{ section.id }}:hover::after {
+    color: {{ section.settings.btn_text_color }} !important;
+  }
+
+  .swiper-pagination-{{ section.id }} .swiper-pagination-bullet {
+    background: transparent;
+    border: 1px solid {{ section.settings.btn_bg_color }};
+    opacity: 0.7;
+    width: 10px;
+    height: 10px;
+  }
+
+  .swiper-pagination-{{ section.id }} .swiper-pagination-bullet-active {
+    background: {{ section.settings.btn_bg_color }};
+    opacity: 1;
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Cross-Device Optimization Viewports */
+  @media (max-width: 768px) {
+    .swiper-container-{{ section.id }} { 
+      height: {{ section.settings.slider_height_mobile }}vh; 
+    }
+    .slide-container-{{ section.id }} { 
+      padding: 0 6%;
+      justify-content: center;
+      background-position: center center;
+    }
+    .slide-content-{{ section.id }} { 
+      text-align: center; 
+    }
+    .slide-title-{{ section.id }} { font-size: 2.2rem; }
+    .slide-subtitle-{{ section.id }} { font-size: 1.1rem; margin-bottom: 30px; }
+    .subscribe-form-{{ section.id }} { margin: 0 auto; padding-left: 15px; }
+    .swiper-button-next-{{ section.id }}, .swiper-button-prev-{{ section.id }} { display: none !important; }
+  }
+{%- endstyle -%}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<div class="swiper mySwiper-{{ section.id }} swiper-container-{{ section.id }}">
+  <div class="swiper-wrapper">
+    
+    {%- for block in section.blocks -%}
+      <div class="swiper-slide" {{ block.shopify_attributes }}>
+        
+        {%- if block.settings.bg_image != blank -%}
+          <div class="slide-container-{{ section.id }}" style="background-image: url('{{ block.settings.bg_image | img_url: '1920x' }}');">
+        {%- else -%}
+          <div class="slide-container-{{ section.id }}" style="background-color: {{ section.settings.slider_bg_color }};">
+        {%- endif -%}
+          
+          <div class="slide-content-{{ section.id }}">
+            {%- if block.settings.heading != blank -%}
+              <h1 class="slide-title-{{ section.id }}">
+                {{ block.settings.heading }}
+                {%- if block.settings.heading_highlight != blank -%}
+                  <span>{{ block.settings.heading_highlight }}</span>
+                {%- endif -%}
+              </h1>
+            {%- endif -%}
+            
+            {%- if block.settings.subheading != blank -%}
+              <p class="slide-subtitle-{{ section.id }}">{{ block.settings.subheading }}</p>
+            {%- endif -%}
+            
+            {%- if block.settings.show_newsletter -%}
+              {%- form 'customer', class: 'subscribe-form-' | append: section.id -%}
+                <input type="hidden" name="contact[tags]" value="newsletter">
+                <input type="email" name="contact[email]" placeholder="{{ block.settings.input_placeholder }}" required>
+                <button type="submit">{{ block.settings.button_text }}</button>
+              {%- endform -%}
+            {%- endif -%}
+          </div>
 
         </div>
-      {% endfor %}
-
-    </div>
-
-    <div class="swiper-pagination"></div>
-
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
+      </div>
+    {%- endfor -%}
 
   </div>
-</section>
+
+  {%- if section.settings.show_arrows -%}
+    <div class="swiper-button-prev swiper-button-prev-{{ section.id }}"></div>
+    <div class="swiper-button-next swiper-button-next-{{ section.id }}"></div>
+  {%- endif -%}
+
+  {%- if section.settings.show_pagination -%}
+    <div class="swiper-pagination swiper-pagination-{{ section.id }}"></div>
+  {%- endif -%}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // FIXED: Strict Parsing mathematical parsing logic to absolute string type mutation prevention
+    const autoplayDelayValue = Number("{{ section.settings.autoplay_speed }}") * 1000;
+
+    const swiperInstantiation_{{ section.id | replace: '-', '_' }} = new Swiper(".mySwiper-{{ section.id }}", {
+      loop: {{ section.settings.loop }},
+      effect: "{{ section.settings.slide_effect }}",
+      autoplay: {
+        delay: autoplayDelayValue,
+        disableOnInteraction: false,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next-{{ section.id }}",
+        prevEl: ".swiper-button-prev-{{ section.id }}",
+      },
+      pagination: {
+        el: ".swiper-pagination-{{ section.id }}",
+        clickable: true,
+      },
+    });
+  });
+</script>
 
 {% schema %}
 {
-  "name": "Hero Slider",
-  "settings": [],
+  "name": "Full Width Swiper Slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page Structural Sizing"
+    },
+    {
+      "type": "range",
+      "id": "slider_height_desktop",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Desktop Screen Height",
+      "default": 85
+    },
+    {
+      "type": "range",
+      "id": "slider_height_mobile",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Mobile Screen Height",
+      "default": 70
+    },
+    {
+      "type": "select",
+      "id": "slide_effect",
+      "label": "Slide Change Animation Style",
+      "options": [
+        { "value": "slide", "label": "Horizontal Slide" },
+        { "value": "fade", "label": "Soft Fade" }
+      ],
+      "default": "slide"
+    },
+    {
+      "type": "select",
+      "id": "bg_position",
+      "label": "Background Image Position Alignment",
+      "options": [
+        { "value": "center center", "label": "Centered" },
+        { "value": "left center", "label": "Left Aligned" },
+        { "value": "right center", "label": "Right Aligned" }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Background Dark Overlay Cover",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Core Branding Typography Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Section Outer Safe Area Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "slider_bg_color",
+      "label": "Slide Base Fallback Color (If No Image Added)",
+      "default": "#cbeade"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Heading Text Color",
+      "default": "#253d4e"
+    },
+    {
+      "type": "color",
+      "id": "title_span_color",
+      "label": "Highlighted Bottom Title Accent Color",
+      "default": "#3bb77e"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle Color Schema",
+      "default": "#4f5d56"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 1.5,
+      "max": 5.5,
+      "step": 0.1,
+      "unit": "rem",
+      "label": "Title Font Scale Layout",
+      "default": 3.8
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 0.8,
+      "max": 2.5,
+      "step": 0.1,
+      "unit": "rem",
+      "label": "Subtitle Font Scale Layout",
+      "default": 1.4
+    },
+    {
+      "type": "header",
+      "content": "Newsletter Container Parameters"
+    },
+    {
+      "type": "color",
+      "id": "form_bg_color",
+      "label": "Newsletter Field Capsule Base",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "form_text_color",
+      "label": "Form Typography Character Color",
+      "default": "#253d4e"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Action Button Primary Tint",
+      "default": "#3bb77e"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg_color",
+      "label": "Action Button Interaction Tint",
+      "default": "#2aa26a"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Action Button Typography Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Swiper Controller Interface Customizer"
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Enable Carousel Infinite Loop Cycle",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Autoplay Transition Delay Timer",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show Prev/Next Arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pagination",
+      "label": "Show Navigation Dots",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "nav_bg_color",
+      "label": "Arrow Circle Button Core",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "nav_icon_color",
+      "label": "Arrow Vector Icon Line Shape",
+      "default": "#253d4e"
+    },
+    {
+      "type": "header",
+      "content": "Outer Section Spacing Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Spacing Padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Spacing Padding",
+      "default": 0
+    }
+  ],
   "blocks": [
     {
       "type": "slide",
-      "name": "Slide",
+      "name": "Slide Data Node",
       "settings": [
         {
           "type": "image_picker",
-          "id": "image",
-          "label": "Image"
+          "id": "bg_image",
+          "label": "Select Full Page Slide Background Image"
         },
         {
           "type": "text",
           "id": "heading",
-          "label": "Heading"
+          "label": "Main Title Accent Line",
+          "default": "Fresh Vegetables"
+        },
+        {
+          "type": "text",
+          "id": "heading_highlight",
+          "label": "Highlighted Subline Anchor",
+          "default": "Big discount"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Supporting Subtitle Paragraph",
+          "default": "Save up to 50% off on your first order"
+        },
+        {
+          "type": "header",
+          "content": "Newsletter Submission Node"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_newsletter",
+          "label": "Display Email Newsletter Box on this Slide",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "input_placeholder",
+          "label": "Field Hint Placeholder Copy",
+          "default": "Your email address"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button Copy Text",
+          "default": "Subscribe"
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Hero Slider"
+      "name": "Full Width Swiper Slider",
+      "blocks": [
+        {
+          "type": "slide"
+        }
+      ]
     }
   ]
 }
