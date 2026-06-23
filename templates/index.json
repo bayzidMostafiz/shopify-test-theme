@@ -19,7 +19,8 @@
         "slide_XQbpma": {
           "type": "slide",
           "settings": {
-            "heading": "<h1>Fresh Vegetables <br> <span>Big discount</span></h1>",
+            "image": "shopify://shop_images/996711b7439c5fa7fdc10fc886c447ab267a5fc1.png",
+            "heading": "<h1>Fresh Vegetables <br/> Big discount</h1>",
             "subheading": "Sign up for the daily newsletter",
             "content_alignment": "center",
             "show_newsletter": true
@@ -28,7 +29,8 @@
         "slide_jVgKNw": {
           "type": "slide",
           "settings": {
-            "heading": "<h1>Fresh Vegetables <br> <span>Big discount</span></h1>",
+            "image": "shopify://shop_images/aca700a3fbb7392d9fd44aebc84bacc7babf5008.png",
+            "heading": "<h1>Fresh Vegetables <br/> Big discount</h1>",
             "subheading": "Sign up for the daily newsletter",
             "content_alignment": "center",
             "show_newsletter": true
@@ -42,7 +44,7 @@
       "name": "Hero Slider Banner",
       "settings": {
         "loop": true,
-        "full_width": false,
+        "full_width": true,
         "autoplay_delay": 5,
         "show_pagination": true,
         "slider_height_desktop": 540,
