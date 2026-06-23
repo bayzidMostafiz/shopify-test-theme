@@ -130,6 +130,16 @@
     }
   }
 
+  .hero-slider-{{ section.id }} .newsletter-form .form-success {
+    color: {{ section.settings.btn_bg_color }};
+    text-align: center;
+    width: 100%;
+  }
+
+  .hero-slider-{{ section.id }} .newsletter-form .form-errors {
+    color: red;
+  }
+
   /* --- Custom Swiper Pagination Design --- */
   .hero-slider-{{ section.id }} .swiper-pagination {
     bottom: 30px !important;
@@ -167,7 +177,7 @@
       {%- for block in section.blocks -%}
         {%- if block.type == 'slide' -%}
           <div class="swiper-slide presentation-slide" 
-               style="{% if block.settings.image != blank %}background-image: url('{{ block.settings.image | image_url: width: 1800 }}');{% else %}background-image: url('https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=1600');{% endif %}"
+               style="{% if block.settings.image != blank %}background-image: url('{{ block.settings.image | image_url: width: 1800 }}');{% else %}background-image: url('https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_large.png?v=1530129081');{% endif %}"
                {{ block.shopify_attributes }}>
             
             <div class="slide-content" style="text-align: {{ block.settings.content_alignment }};">
@@ -184,8 +194,12 @@
               {%- if block.settings.show_newsletter -%}
                 {%- form 'customer', class: 'newsletter-form' -%}
                   <input type="hidden" name="contact[tags]" value="newsletter">
-                  <input type="email" name="contact[email]" placeholder="Your email address" value="{{ form.email }}" aria-required="true" required>
-                  <button type="submit" name="commit">Subscribe</button>
+                  <div class="newsletter-form__fields">
+                    <input type="email" name="contact[email]" placeholder="Your email address" aria-required="true" autocapitalize="off" autocomplete="email" required>
+                    <button type="submit" name="commit">Subscribe</button>
+                  </div>
+                  <div class="newsletter-form__message newsletter-form__message--success" style="display: none;">Thanks for subscribing!</div>
+                  <div class="newsletter-form__message newsletter-form__message--error" style="display: none;">Something went wrong. Please try again.</div>
                 {%- endform -%}
               {%- endif -%}
             </div>
@@ -237,6 +251,45 @@
       if (event.detail.sectionId === '{{ section.id }}') {
         initSwiper();
       }
+    });
+
+    // AJAX Newsletter Form Submission
+    const newsletterForms = document.querySelectorAll('.newsletter-form');
+    newsletterForms.forEach(form => {
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const form = event.target;
+        const emailInput = form.querySelector('input[type="email"]');
+        const submitButton = form.querySelector('button[type="submit"]');
+        const successMessage = form.querySelector('.newsletter-form__message--success');
+        const errorMessage = form.querySelector('.newsletter-form__message--error');
+        const formFields = form.querySelector('.newsletter-form__fields');
+
+        const originalButtonText = submitButton.textContent;
+        submitButton.textContent = 'Submitting...';
+        submitButton.disabled = true;
+
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => {
+          if (response.ok) {
+            formFields.style.display = 'none';
+            successMessage.style.display = 'block';
+          } else {
+            errorMessage.style.display = 'block';
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+          }
+        });
+      });
     });
   });
 </script>
