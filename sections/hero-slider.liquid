@@ -84,6 +84,11 @@
     max-width: 450px;
     margin: 0 auto;
   }
+  
+  .hero-slider-{{ section.id }} .newsletter-form__fields {
+    display: flex;
+    width: 100%;
+  }
 
   .hero-slider-{{ section.id }} .newsletter-form input[type="email"] {
     border: none;
@@ -262,13 +267,12 @@
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener('DOMContentLoaded', function() {
     // Shopify Customizer event listener handler trigger structure configuration runtime map parameters
     const initSwiper = () => {
       const sliderEl = document.querySelector('#Swiper-{{ section.id }}');
       if (!sliderEl) return;
       
-      // Dynamic calculations metrics configuration variable property setup runtime
       const delayTime = parseInt('{{ section.settings.autoplay_delay }}') * 1000;
       const isLoop = {{ section.settings.loop | json }};
 
@@ -350,7 +354,6 @@
         modal.style.display = "none";
       }
     }
-    });
   });
 </script>
 
