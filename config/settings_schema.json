@@ -1,10 +1,10 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Skeleton",
+    "theme_name": "Bayzid",
     "theme_version": "0.1.0",
-    "theme_author": "Shopify",
-    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_author": "Md Bayzid Mostafiz",
+    "theme_documentation_url": "https://bayzidmostafiz.com/",
     "theme_support_url": "https://support.shopify.com/"
   },
   {
@@ -16,9 +16,15 @@
       },
       {
         "type": "font_picker",
-        "id": "type_primary_font",
+        "id": "type_heading_font",
+        "default": "work_sans_n7",
+        "label": "Heading Font"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
         "default": "work_sans_n4",
-        "label": "t:general.primary"
+        "label": "Body Font"
       }
     ]
   },
@@ -27,26 +33,37 @@
     "settings": [
       {
         "type": "select",
-        "id": "max_page_width",
-        "label": "t:labels.page_width",
+        "id": "page_layout_type",
+        "label": "Page Layout Mode",
         "options": [
           {
-            "value": "90rem",
-            "label": "t:options.page_width.narrow"
+            "value": "full_width",
+            "label": "Full Width (100%)"
           },
           {
-            "value": "110rem",
-            "label": "t:options.page_width.wide"
+            "value": "custom_width",
+            "label": "Custom Width (px)"
           }
         ],
-        "default": "90rem"
+        "default": "custom_width"
+      },
+      {
+        "type": "range",
+        "id": "custom_page_width",
+        "min": 1000,
+        "max": 1800,
+        "step": 10,
+        "unit": "px",
+        "label": "Custom Container Max Width",
+        "default": 1200,
+        "info": "Eti sudhu kaaj korbe jodi Layout Mode 'Custom Width (px)' select kora thake."
       },
       {
         "type": "range",
         "id": "min_page_margin",
         "min": 10,
         "max": 100,
-        "step": 1,
+        "step": 5,
         "unit": "px",
         "label": "t:labels.page_margin",
         "default": 20
