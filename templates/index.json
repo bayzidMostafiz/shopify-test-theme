@@ -9,10 +9,6 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
-      "settings": {}
-    },
     "hero_slider_YgdTBq": {
       "type": "hero-slider",
       "blocks": {
@@ -65,7 +61,6 @@
     }
   },
   "order": [
-    "main",
     "hero_slider_YgdTBq"
   ]
 }
