@@ -140,6 +140,47 @@
     color: red;
   }
 
+  /* --- Newsletter Modal Styles --- */
+  .newsletter-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .newsletter-modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px 30px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+  }
+
+  .newsletter-modal-close {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .newsletter-modal-close:hover {
+    color: black;
+  }
+
   /* --- Custom Swiper Pagination Design --- */
   .hero-slider-{{ section.id }} .swiper-pagination {
     bottom: 30px !important;
@@ -198,8 +239,6 @@
                     <input type="email" name="contact[email]" placeholder="Your email address" aria-required="true" autocapitalize="off" autocomplete="email" required>
                     <button type="submit" name="commit">Subscribe</button>
                   </div>
-                  <div class="newsletter-form__message newsletter-form__message--success" style="display: none;">Thanks for subscribing!</div>
-                  <div class="newsletter-form__message newsletter-form__message--error" style="display: none;">Something went wrong. Please try again.</div>
                 {%- endform -%}
               {%- endif -%}
             </div>
@@ -212,6 +251,13 @@
     {%- if section.settings.show_pagination -%}
       <div class="swiper-pagination"></div>
     {%- endif -%}
+  </div>
+
+  <div id="newsletter-modal-{{ section.id }}" class="newsletter-modal">
+    <div class="newsletter-modal-content">
+      <span class="newsletter-modal-close">&times;</span>
+      <p id="newsletter-modal-message-{{ section.id }}"></p>
+    </div>
   </div>
 </div>
 
@@ -253,43 +299,57 @@
       }
     });
 
-    // AJAX Newsletter Form Submission
-    const newsletterForms = document.querySelectorAll('.newsletter-form');
-    newsletterForms.forEach(form => {
-      form.addEventListener('submit', function(event) {
-        event.preventDefault();
+    // --- AJAX Newsletter & Modal ---
+    const newsletterForm = document.querySelector('#shopify-section-{{ section.id }} .newsletter-form');
+    const modal = document.getElementById('newsletter-modal-{{ section.id }}');
+    const modalMessage = document.getElementById('newsletter-modal-message-{{ section.id }}');
+    const closeModal = document.querySelector('#newsletter-modal-{{ section.id }} .newsletter-modal-close');
+
+    if (newsletterForm) {
+      newsletterForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      const form = event.target;
+      const emailInput = form.querySelector('input[type="email"]');
+      const submitButton = form.querySelector('button[type="submit"]');
+      const originalButtonText = submitButton.textContent;
+
+      submitButton.textContent = 'Submitting...';
+      submitButton.disabled = true;
+
+      const formData = new FormData(form);
+
+      fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .finally(() => {
+        // Even if the user is already subscribed (non-200 response), we show success.
+        modalMessage.textContent = 'Thanks for subscribing!';
+        modal.style.display = 'flex';
         
-        const form = event.target;
-        const emailInput = form.querySelector('input[type="email"]');
-        const submitButton = form.querySelector('button[type="submit"]');
-        const successMessage = form.querySelector('.newsletter-form__message--success');
-        const errorMessage = form.querySelector('.newsletter-form__message--error');
-        const formFields = form.querySelector('.newsletter-form__fields');
-
-        const originalButtonText = submitButton.textContent;
-        submitButton.textContent = 'Submitting...';
-        submitButton.disabled = true;
-
-        const formData = new FormData(form);
-
-        fetch(form.action, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        })
-        .then(response => {
-          if (response.ok) {
-            formFields.style.display = 'none';
-            successMessage.style.display = 'block';
-          } else {
-            errorMessage.style.display = 'block';
-            submitButton.textContent = originalButtonText;
-            submitButton.disabled = false;
-          }
-        });
+        // Reset form state
+        submitButton.textContent = originalButtonText;
+        submitButton.disabled = false;
+        emailInput.value = '';
       });
+    });
+    }
+
+    if(closeModal) {
+      closeModal.onclick = function() {
+        modal.style.display = "none";
+      }
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
     });
   });
 </script>
